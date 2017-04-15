@@ -3700,7 +3700,8 @@ int main(int argc, char** argv) {
     return(0);
   } else if ( (argc-1-1) > MAX_NUM_PACKET ){
     printf("Too many packets input! Maximum allowed is %d\n", MAX_NUM_PACKET);
-  } else if (argc == 2 && ( strstr(argv[1], ".txt")!=NULL || strstr(argv[1], ".TXT")!=NULL) ) {  // from file
+  } else if (argc == 2 && ( strstr(argv[1], ".txt")!=NULL || strstr(argv[1], ".TXT")!=NULL) )
+  {  // from file
     char **items = malloc_2d(MAX_NUM_PACKET+2, MAX_NUM_CHAR_CMD);
     if (items == NULL) {
       printf("malloc failed!\n");
@@ -3718,7 +3719,8 @@ int main(int argc, char** argv) {
     if ( num_repeat == -2 ){
       return(-1);
     }
-  } else { // from command line
+  }
+else { // from command line
     num_packet = parse_input(argc, argv, &num_repeat);
     if ( num_repeat == -2 ){
       return(-1);
