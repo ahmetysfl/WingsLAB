@@ -1,7 +1,9 @@
 # depslib dependency file v1.0
-1492261775 source:/home/ahmet/gitExample/exampleRF/main.c
+1492267197 source:/home/ahmet/gitExample/exampleRF/main.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
+	<libbladeRF.h>
 
 1460671772 /usr/include//stdio.h
 	<features.h>
@@ -94,4 +96,134 @@
 1460671771 /usr/include//alloca.h
 	<features.h>
 	<stddef.h>
+
+1460671775 /usr/include//string.h
+	<features.h>
+	<stddef.h>
+	<xlocale.h>
+	<bits/string.h>
+	<bits/string2.h>
+	<bits/string3.h>
+
+1467235489 /usr/include//libbladeRF.h
+	<stdint.h>
+	<stdlib.h>
+	<stdbool.h>
+	<windows.h>
+
+1460671771 /usr/include//stdint.h
+	<features.h>
+	<bits/wchar.h>
+	<bits/wordsize.h>
+
+1491507969 source:/home/ahmet/gitExample/exampleRF/btle_rx.c
+	"common.h"
+	<libbladeRF.h>
+	<hackrf.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+	<math.h>
+	<getopt.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<errno.h>
+	<windows.h>
+	<unistd.h>
+	<sys/time.h>
+	<signal.h>
+	"scramble_table.h"
+
+1492257868 /home/ahmet/gitExample/exampleRF/common.h
+
+1460671777 /usr/include//time.h
+	<features.h>
+	<stddef.h>
+	<bits/time.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
+	<xlocale.h>
+
+1460671768 /usr/include//math.h
+	<features.h>
+	<bits/math-vector.h>
+	<bits/huge_val.h>
+	<bits/huge_valf.h>
+	<bits/huge_vall.h>
+	<bits/inf.h>
+	<bits/nan.h>
+	<bits/mathdef.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls.h>
+	<bits/mathcalls.h>
+	<bits/mathinline.h>
+	<bits/math-finite.h>
+
+1460671781 /usr/include//fcntl.h
+	<features.h>
+	<bits/types.h>
+	<bits/fcntl.h>
+	<time.h>
+	<bits/stat.h>
+	<bits/fcntl2.h>
+
+1460671771 /usr/include//errno.h
+	<features.h>
+	<bits/errno.h>
+
+1460671779 /usr/include//unistd.h
+	<features.h>
+	<bits/posix_opt.h>
+	<bits/environments.h>
+	<bits/types.h>
+	<stddef.h>
+	<bits/confname.h>
+	<getopt.h>
+	<bits/unistd.h>
+
+1460671770 /usr/include//signal.h
+	<features.h>
+	<bits/sigset.h>
+	<bits/types.h>
+	<bits/signum.h>
+	<time.h>
+	<bits/siginfo.h>
+	<bits/sigaction.h>
+	<bits/sigcontext.h>
+	<stddef.h>
+	<bits/sigstack.h>
+	<sys/ucontext.h>
+	<bits/pthreadtypes.h>
+	<bits/sigthread.h>
+
+1491507969 /home/ahmet/gitExample/exampleRF/scramble_table.h
+
+1492269671 source:/home/ahmet/gitExample/exampleRF/btle_tx.c
+	"common.h"
+	<libbladeRF.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<ctype.h>
+	<math.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<fcntl.h>
+	<errno.h>
+	<signal.h>
+	"gauss_cos_sin_table.h"
+	"scramble_table_ch37.h"
+
+1491507969 /home/ahmet/gitExample/exampleRF/gauss_cos_sin_table.h
+
+1491507969 /home/ahmet/gitExample/exampleRF/scramble_table_ch37.h
+
+1492266494 source:/home/ahmet/gitExample/exampleRF/example.c
 
