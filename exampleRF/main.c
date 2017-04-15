@@ -90,6 +90,7 @@ int main()
      * to all wildcard (i.e., "any device") values */
     bladerf_init_devinfo(&dev_info);
 
+    strcpy(dev_info.serial,"62fd1f9210e0940a2c22f705056305cb");
     printf("Serial: %s !\n",dev_info.serial);
     printf("USB BUS: %d !\n",dev_info.usb_bus);
     printf("USB ADDR: %d !\n",dev_info.usb_addr);
