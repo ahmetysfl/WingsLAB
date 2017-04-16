@@ -121,9 +121,17 @@ int main(int argc, char *argv[])
     struct bladerf *dev = NULL;
     struct bladerf_devinfo dev_info;
 
-    strcpy(dev_info.serial,"f005b46aa0600603344a9c3d1c684125");
-
     printf("Serial number is set : f005b46aa0600603344a9c3d1c684125 \n");
+
+    /* Initialize the information used to identify the desired device
+     * to all wildcard (i.e., "any device") values */
+    bladerf_init_devinfo(&dev_info);
+    /* Request a device with the provided serial number.
+     * Invalid strings should simply fail to match a device. */
+    if (argc >= 2) {
+        strncpy(dev_info.serial, argv[1], sizeof(dev_info.serial) - 1);
+    }
+
     /* Initialize the information used to identify the desired device
      * to all wildcard (i.e., "any device") values */
     //bladerf_init_devinfo(&dev_info);
