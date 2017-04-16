@@ -1,8 +1,9 @@
 # depslib dependency file v1.0
-1492280737 source:/home/ahmet/gitExample/liquidExample/main.c
+1492293228 source:/home/ahmet/gitExample/liquidExample/main.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
+	<string.h>
 	<complex.h>
 	<liquid/liquid.h>
 

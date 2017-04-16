@@ -12,10 +12,14 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option projectCompilerOptionsRelation="1" />
 				<Compiler>
-					<Add option="-g" />
 					<Add option="-lm -lc -lliquid" />
+					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add option="-lm -lc -lliquid" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/liquidExample" prefix_auto="1" extension_auto="1" />
@@ -24,6 +28,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-lm -lc -lliquid" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -34,6 +39,10 @@
 			<Add option="-Wall" />
 			<Add option="-lm -lc -lliquid" />
 		</Compiler>
+		<Linker>
+			<Add library="/usr/local/lib/libliquid.a" />
+			<Add library="../../../../usr/local/lib/libliquid.so" />
+		</Linker>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
