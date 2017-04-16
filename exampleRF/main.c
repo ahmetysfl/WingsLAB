@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    fprintf(stderr,"Device is selected, Serial Number: %s",dev_info.serial);
+    fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
 
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
      /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
 
-     sync_rx_example(&dev);
+     sync_rx_example(dev);
 
 out:
     bladerf_close(dev);
