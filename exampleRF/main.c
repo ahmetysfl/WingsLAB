@@ -261,35 +261,6 @@ int main(int argc, char *argv[])
 
     printf("Device is selected, Serial Number: %s",dev_info.serial);
 
-     printf("Device is selected, Serial Number: %s",dev_info.serial);
-
-    /* Set up RX module parameters */
-    config.module     = BLADERF_MODULE_RX;
-    config.frequency  = 2400000000;
-    config.bandwidth  = 2000000;
-    config.samplerate = 1000000;
-    config.rx_lna     = BLADERF_LNA_GAIN_MAX;
-    config.vga1       = 30;
-    config.vga2       = 3;
-    status = configure_module(dev, &config);
-    if (status != 0) {
-        fprintf(stderr, "Failed to configure RX module. Exiting.\n");
-        goto out;
-    }
-
-    printf("RX device is configured, Serial Number: %s",dev_info.serial);
-
-    /* Application code goes here.
-     *
-     * Don't forget to call bladerf_enable_module() before attempting to
-     * transmit or receive samples!
-     */
-     /* "User" samples buffers and their associated sizes, in units of samples.
-     * Recall that one sample = two int16_t values. */
-
-     sync_rx_example(&dev);
-
-
 out:
     bladerf_close(dev);
     return status;
