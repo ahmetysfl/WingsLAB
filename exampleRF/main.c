@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     struct bladerf *dev = NULL;
     struct bladerf_devinfo dev_info;
 
-    printf("Serial number is set : f005b46aa0600603344a9c3d1c684125 \n");
+    //printf("Serial number is set : f005b46aa0600603344a9c3d1c684125 \n");
 
     /* Initialize the information used to identify the desired device
      * to all wildcard (i.e., "any device") values */
