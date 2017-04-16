@@ -238,6 +238,7 @@ int sync_rx_meta_now_example(struct bladerf *dev,
  */
 int main(int argc, char *argv[])
 {
+    fprintf(stderr,"Serial is selected. \n");
     int status;
     struct module_config config;
     struct bladerf *dev = NULL;
