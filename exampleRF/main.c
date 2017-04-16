@@ -92,6 +92,10 @@ int main(int argc, char *argv[])
     struct module_config config;
     struct bladerf *dev = NULL;
     struct bladerf_devinfo dev_info;
+
+    strcpy(dev_info.serial,"62fd1f9210e0940a2c22f705056305cb");
+
+    printf("Serial number is set : 62fd1f9210e0940a2c22f705056305cb");
     /* Initialize the information used to identify the desired device
      * to all wildcard (i.e., "any device") values */
     bladerf_init_devinfo(&dev_info);
