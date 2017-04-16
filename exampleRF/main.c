@@ -100,6 +100,7 @@ int sync_rx_example(struct bladerf *dev)
         if (status != 0) {
             fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
         }
+        status = 0;
     }
 
     fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
