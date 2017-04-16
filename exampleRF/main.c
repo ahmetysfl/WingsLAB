@@ -95,13 +95,15 @@ int sync_rx_example(struct bladerf *dev)
     }
     printf("RX Enabled.");
 
-    while (status == 0 && !done) {
+    while (status == 0) {
         /* Receive samples */
         status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 5000);
-        if (status == 0) {
+        if (status != 0) {
             fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
         }
     }
+
+    fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
 
     for(int i=0; i<samples_len; i++)
     {
