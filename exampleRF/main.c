@@ -93,6 +93,8 @@ int sync_rx_example(struct bladerf *dev)
                 bladerf_strerror(status));
         goto out;
     }
+    printf("RX Enabled.");
+
     while (status == 0 && !done) {
         /* Receive samples */
         status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 5000);
@@ -254,6 +256,9 @@ int main(int argc, char *argv[])
                 bladerf_strerror(status));
         return 1;
     }
+
+    printf("Device is selected, Serial Number: %s",dev_info.serial);
+
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
     config.frequency  = 2400000000;
@@ -267,6 +272,8 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to configure RX module. Exiting.\n");
         goto out;
     }
+
+    printf("RX device is configured, Serial Number: %s",dev_info.serial);
 
     /* Application code goes here.
      *
