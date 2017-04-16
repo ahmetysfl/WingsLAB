@@ -45,6 +45,9 @@ static int init_sync(struct bladerf *dev)
                 bladerf_strerror(status));
         return status;
     }
+
+    fprintf(stderr, "Success to configure RX sync interface: %s\n", bladerf_strerror(status));
+
     status = bladerf_sync_config(dev,
                                  BLADERF_MODULE_TX,
                                  BLADERF_FORMAT_SC16_Q11,
@@ -56,6 +59,8 @@ static int init_sync(struct bladerf *dev)
         fprintf(stderr, "Failed to configure TX sync interface: %s\n",
                 bladerf_strerror(status));
     }
+
+    fprintf(stderr, "Success to configure TX sync interface: %s\n", bladerf_strerror(status));
     return status;
 }
 
@@ -75,13 +80,7 @@ int sync_rx_example(struct bladerf *dev)
         perror("malloc");
         return BLADERF_ERR_MEM;
     }
-    /* Allocate a buffer to prepare transmit data in */
-    tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
-    if (tx_samples == NULL) {
-        perror("malloc");
-        free(rx_samples);
-        return BLADERF_ERR_MEM;
-    }
+
     /* Initialize synch interface on RX and TX modules */
     status = init_sync(dev);
     if (status != 0) {
@@ -93,7 +92,7 @@ int sync_rx_example(struct bladerf *dev)
                 bladerf_strerror(status));
         goto out;
     }
-    printf("RX Enabled.");
+    fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
 
     while (status == 0) {
         /* Receive samples */
