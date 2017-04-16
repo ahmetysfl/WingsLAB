@@ -106,6 +106,10 @@ int main(int argc, char *argv[])
                 bladerf_strerror(status));
         return 1;
     }
+
+    printf("Device is selected, Serial Number: %s",dev_info.serial);
+
+
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
     config.frequency  = 910000000;
@@ -140,3 +144,4 @@ out:
     bladerf_close(dev);
     return status;
 }
+
