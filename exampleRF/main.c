@@ -78,6 +78,34 @@ int configure_module(struct bladerf *dev, struct module_config *c)
     }
     return status;
 }
+
+struct bladerf * open_bladerf_from_serial(const char *serial)
+{
+    int status;
+    struct bladerf *dev;
+    struct bladerf_devinfo info;
+    /* Initialize all fields to "don't care" wildcard values.
+     *
+     * Immediately passing this to bladerf_open_with_devinfo() would cause
+     * libbladeRF to open any device on any available backend. */
+    bladerf_init_devinfo(&info);
+    /* Specify the desired device's serial number, while leaving all other
+     * fields in the info structure wildcard values */
+    strncpy(info.serial, serial, BLADERF_SERIAL_LENGTH - 1);
+    info.serial[BLADERF_SERIAL_LENGTH - 1] = '\0';
+    status = bladerf_open_with_devinfo(&dev, &info);
+    if (status == BLADERF_ERR_NODEV) {
+        printf("No devices available with serial=%s\n", serial);
+        return NULL;
+    } else if (status != 0) {
+        fprintf(stderr, "Failed to open device with serial=%s (%s)\n",
+                serial, bladerf_strerror(status));
+        return NULL;
+    } else {
+        return dev;
+    }
+}
+
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
  *
@@ -95,15 +123,12 @@ int main(int argc, char *argv[])
 
     strcpy(dev_info.serial,"62fd1f9210e0940a2c22f705056305cb");
 
-    printf("Serial number is set : 62fd1f9210e0940a2c22f705056305cb");
+    printf("Serial number is set : 62fd1f9210e0940a2c22f705056305cb \n");
     /* Initialize the information used to identify the desired device
      * to all wildcard (i.e., "any device") values */
-    bladerf_init_devinfo(&dev_info);
+    //bladerf_init_devinfo(&dev_info);
     /* Request a device with the provided serial number.
      * Invalid strings should simply fail to match a device. */
-    if (argc >= 2) {
-        strncpy(dev_info.serial, argv[1], sizeof(dev_info.serial) - 1);
-    }
     status = bladerf_open_with_devinfo(&dev, &dev_info);
     if (status != 0) {
         fprintf(stderr, "Unable to open device: %s\n",
@@ -112,7 +137,6 @@ int main(int argc, char *argv[])
     }
 
     printf("Device is selected, Serial Number: %s",dev_info.serial);
-
 
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
