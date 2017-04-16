@@ -121,9 +121,9 @@ int main(int argc, char *argv[])
     struct bladerf *dev = NULL;
     struct bladerf_devinfo dev_info;
 
-    strcpy(dev_info.serial,"62fd1f9210e0940a2c22f705056305cb");
+    strcpy(dev_info.serial,"f005b46aa0600603344a9c3d1c684125");
 
-    printf("Serial number is set : 62fd1f9210e0940a2c22f705056305cb \n");
+    printf("Serial number is set : f005b46aa0600603344a9c3d1c684125 \n");
     /* Initialize the information used to identify the desired device
      * to all wildcard (i.e., "any device") values */
     //bladerf_init_devinfo(&dev_info);
