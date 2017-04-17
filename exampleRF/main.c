@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <libbladeRF.h>
+#include <time.h>
+
 /* The RX and TX modules are configured independently for these parameters */
 struct module_config {
     bladerf_module module;
@@ -13,6 +15,18 @@ struct module_config {
     int vga1;
     int vga2;
 };
+
+
+void delay(int milliseconds)
+{
+    long pause;
+    clock_t now,then;
+
+    pause = milliseconds*(CLOCKS_PER_SEC/1000);
+    now = then = clock();
+    while( (now-then) < pause )
+        now = clock();
+}
 
 static int init_sync(struct bladerf *dev)
 {
@@ -217,6 +231,16 @@ int sync_rx_meta_now_example(struct bladerf *dev,
  */
 int main(int argc, char *argv[])
 {
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    rawtime = time(NULL);
+    fprintf(stderr,"Current local time and date: %d \n", rawtime);
+    rawtime = time(NULL);
+    fprintf(stderr,"Current local time and date: %d \n", rawtime);
+    delay(1000);
+    rawtime = time(NULL);
+    fprintf(stderr,"Current local time and date: %d \n", rawtime);
     fprintf(stderr,"Serial is selected. \n");
     int status;
     struct module_config config;
