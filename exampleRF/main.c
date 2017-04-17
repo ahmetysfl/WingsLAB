@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
     /* Retrieve the current timestamp */
     status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
 
-    meta.timestamp = meta.timestamp + 1000000;
+    meta.timestamp = meta.timestamp + 2000000;
     if (status != 0) {
         fprintf(stderr, "Failed to get current RX timestamp: %s\n",
                 bladerf_strerror(status));
