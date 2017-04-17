@@ -49,7 +49,7 @@ static int init_sync(struct bladerf *dev)
      * interface. SC16 Q11 samples *without* metadata are used. */
     status = bladerf_sync_config(dev,
                                  BLADERF_MODULE_RX,
-                                 BLADERF_FORMAT_SC16_Q11,
+                                 BLADERF_FORMAT_SC16_Q11_META,
                                  num_buffers,
                                  buffer_size,
                                  num_transfers,
@@ -294,6 +294,22 @@ int main(int argc, char *argv[])
         perror("malloc");
         return BLADERF_ERR_MEM;
     }
+
+    struct bladerf_metadata meta;
+    memset(&meta, 0, sizeof(meta));
+    /* Perform scheduled RXs by having meta.timestamp set appropriately
+     * and ensuring the BLADERF_META_FLAG_RX_NOW flag is cleared. */
+    meta.flags = 0;
+    /* Retrieve the current timestamp */
+    status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
+    if (status != 0) {
+        fprintf(stderr, "Failed to get current RX timestamp: %s\n",
+                bladerf_strerror(status));
+    } else {
+        fprintf(stderr,"Current RX timestamp: %d \n", meta.timestamp);
+    }
+
+
 
     fprintf(stderr,"1- Current Time: %d \n", time(NULL));
      sync_rx_example(dev,rx_samples,samples_len);
