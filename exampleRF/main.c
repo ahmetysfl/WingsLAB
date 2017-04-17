@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <libbladeRF.h>
 #include <time.h>
+#include <inttypes.h>
 
 /* The RX and TX modules are configured independently for these parameters */
 struct module_config {
@@ -306,7 +307,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to get current RX timestamp: %s\n",
                 bladerf_strerror(status));
     } else {
-        fprintf(stderr,"Current RX timestamp: %d \n", meta.timestamp);
+        fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
     }
 
 
