@@ -63,19 +63,6 @@ static int init_sync(struct bladerf *dev)
 
     fprintf(stderr, "Success to configure RX sync interface: %s\n", bladerf_strerror(status));
 
-    status = bladerf_sync_config(dev,
-                                 BLADERF_MODULE_TX,
-                                 BLADERF_FORMAT_SC16_Q11,
-                                 num_buffers,
-                                 buffer_size,
-                                 num_transfers,
-                                 timeout_ms);
-    if (status != 0) {
-        fprintf(stderr, "Failed to configure TX sync interface: %s\n",
-                bladerf_strerror(status));
-    }
-
-    fprintf(stderr, "Success to configure TX sync interface: %s\n", bladerf_strerror(status));
     return status;
 }
 
