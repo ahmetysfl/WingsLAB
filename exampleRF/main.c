@@ -235,9 +235,7 @@ int main(int argc, char *argv[])
     struct tm * timeinfo;
 
     rawtime = time(NULL);
-    fprintf(stderr,"Current local time and date: %d \n", rawtime);
-    rawtime = time(NULL);
-    fprintf(stderr,"Current local time and date: %d \n", rawtime);
+    fprintf(stderr,"Current Time: %d \n", time(NULL));
     delay(1000);
     rawtime = time(NULL);
     fprintf(stderr,"Current local time and date: %d \n", rawtime);
@@ -289,7 +287,7 @@ int main(int argc, char *argv[])
     /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
     int16_t *rx_samples = NULL;
-    const unsigned int samples_len = 10000; /* May be any (reasonable) size */
+    const unsigned int samples_len = 1000000; /* May be any (reasonable) size */
     /* Allocate a buffer to store received samples in */
     rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
     if (rx_samples == NULL) {
@@ -297,8 +295,9 @@ int main(int argc, char *argv[])
         return BLADERF_ERR_MEM;
     }
 
+    fprintf(stderr,"Current Time: %d \n", time(NULL));
      sync_rx_example(dev,rx_samples,samples_len);
-
+    fprintf(stderr,"Current Time: %d \n", time(NULL));
      for(int i=0; i<samples_len; i++)
     {
         printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
