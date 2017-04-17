@@ -316,6 +316,14 @@ int main(int argc, char *argv[])
      sync_rx_example(dev,rx_samples,samples_len);
     fprintf(stderr,"2- Current Time: %d \n", time(NULL));
 
+    status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
+    if (status != 0) {
+        fprintf(stderr, "Failed to get current RX timestamp: %s\n",
+                bladerf_strerror(status));
+    } else {
+        fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
+    }
+
     /*
      for(int i=0; i<samples_len; i++)
     {
