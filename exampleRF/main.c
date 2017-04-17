@@ -50,7 +50,7 @@ static int init_sync(struct bladerf *dev)
      * interface. SC16 Q11 samples *without* metadata are used. */
     status = bladerf_sync_config(dev,
                                  BLADERF_MODULE_RX,
-                                 BLADERF_FORMAT_SC16_Q11,
+                                 BLADERF_FORMAT_SC16_Q11_META,
                                  num_buffers,
                                  buffer_size,
                                  num_transfers,
@@ -79,7 +79,7 @@ static int init_sync(struct bladerf *dev)
     return status;
 }
 
-int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len)
+int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len,struct bladerf_metadata *meta)
 {
     int status, ret;
     bool have_tx_data = false;
@@ -98,7 +98,7 @@ int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len)
     fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
 
     // Receive Samples From Modules
-    status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 10000);
+    status = bladerf_sync_rx(dev, rx_samples, samples_len, meta, 10000);
     if (status != 0) {
         fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
     }
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 
 
     fprintf(stderr,"1- Current Time: %d \n", time(NULL));
-     sync_rx_example(dev,rx_samples,samples_len);
+     sync_rx_example(dev,rx_samples,samples_len,&meta);
     fprintf(stderr,"2- Current Time: %d \n", time(NULL));
 
     status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);

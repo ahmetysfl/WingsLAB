@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1492460442 source:/home/ahmet/gitExample/exampleRF/main.c
+1492461066 source:/home/ahmet/gitExample/exampleRF/main.c
 	<stdlib.h>
 	<string.h>
 	<stdio.h>
 	<libbladeRF.h>
 	<time.h>
+	<inttypes.h>
 
 1460671772 /usr/include//stdio.h
 	<features.h>
@@ -227,4 +228,9 @@
 1491507969 /home/ahmet/gitExample/exampleRF/scramble_table_ch37.h
 
 1492266494 source:/home/ahmet/gitExample/exampleRF/example.c
+
+1460671771 /usr/include//inttypes.h
+	<features.h>
+	<stdint.h>
+	<stddef.h>
 
