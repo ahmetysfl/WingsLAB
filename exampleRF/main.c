@@ -97,7 +97,7 @@ int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len)
     fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
 
     // Receive Samples From Modules
-    status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 5000);
+    status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 10000);
     if (status != 0) {
         fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
     }
@@ -295,9 +295,9 @@ int main(int argc, char *argv[])
         return BLADERF_ERR_MEM;
     }
 
-    fprintf(stderr,"Current Time: %d \n", time(NULL));
+    fprintf(stderr,"1- Current Time: %d \n", time(NULL));
      sync_rx_example(dev,rx_samples,samples_len);
-    fprintf(stderr,"Current Time: %d \n", time(NULL));
+    fprintf(stderr,"2- Current Time: %d \n", time(NULL));
 
     /*
      for(int i=0; i<samples_len; i++)
