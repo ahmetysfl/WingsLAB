@@ -298,11 +298,13 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Current Time: %d \n", time(NULL));
      sync_rx_example(dev,rx_samples,samples_len);
     fprintf(stderr,"Current Time: %d \n", time(NULL));
+
+    /*
      for(int i=0; i<samples_len; i++)
     {
         printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
     }
-
+    */
 
 out:
     bladerf_close(dev);
