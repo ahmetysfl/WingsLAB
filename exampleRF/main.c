@@ -64,22 +64,10 @@ static int init_sync(struct bladerf *dev)
     return status;
 }
 
-int sync_rx_example(struct bladerf *dev)
+int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len)
 {
     int status, ret;
-    bool done = false;
     bool have_tx_data = false;
-    /* "User" samples buffers and their associated sizes, in units of samples.
-     * Recall that one sample = two int16_t values. */
-    int16_t *rx_samples = NULL;
-    int16_t *tx_samples = NULL;
-    const unsigned int samples_len = 10000; /* May be any (reasonable) size */
-    /* Allocate a buffer to store received samples in */
-    rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
-    if (rx_samples == NULL) {
-        perror("malloc");
-        return BLADERF_ERR_MEM;
-    }
 
     /* Initialize synch interface on RX and TX modules */
     status = init_sync(dev);
@@ -94,21 +82,13 @@ int sync_rx_example(struct bladerf *dev)
     }
     fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
 
-    while (status == 0) {
-        /* Receive samples */
-        status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 5000);
-        if (status != 0) {
-            fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
-        }
-        status = 1;
+    // Receive Samples From Modules
+    status = bladerf_sync_rx(dev, rx_samples, samples_len, NULL, 5000);
+    if (status != 0) {
+        fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
     }
+    status = 1;
 
-    fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
-
-    for(int i=0; i<samples_len; i++)
-    {
-        printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
-    }
 
 
 out:
@@ -125,9 +105,6 @@ out:
         fprintf(stderr, "Failed to disable TX module: %s\n",
                 bladerf_strerror(status));
     }
-    /* Free up our resources */
-    free(rx_samples);
-    free(tx_samples);
     return ret;
 }
 
@@ -284,12 +261,23 @@ int main(int argc, char *argv[])
      * Don't forget to call bladerf_enable_module() before attempting to
      * transmit or receive samples!
      */
-     /* "User" samples buffers and their associated sizes, in units of samples.
-     * Recall that one sample = two int16_t values. */
 
-     sync_rx_example(dev);
+    /* "User" samples buffers and their associated sizes, in units of samples.
+     * Recall that one sample = two int16_t values. */
+    int16_t *rx_samples = NULL;
+    const unsigned int samples_len = 10000; /* May be any (reasonable) size */
+    /* Allocate a buffer to store received samples in */
+    rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
+    if (rx_samples == NULL) {
+        perror("malloc");
+        return BLADERF_ERR_MEM;
+    }
+
+     sync_rx_example(dev,rx_samples,samples_len);
 
 out:
     bladerf_close(dev);
+    /* Free up our resources */
+    free(rx_samples);
     return status;
 }
