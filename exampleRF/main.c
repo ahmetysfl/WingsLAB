@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-   fprintf(stderr,"RX device is configured, Serial Number: %s",dev_info.serial);
+   fprintf(stderr,"RX device is configured, Serial Number: %s \n",dev_info.serial);
 
     /* Application code goes here.
      *
@@ -274,6 +274,12 @@ int main(int argc, char *argv[])
     }
 
      sync_rx_example(dev,rx_samples,samples_len);
+
+     for(int i=0; i<samples_len; i++)
+    {
+        printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
+    }
+
 
 out:
     bladerf_close(dev);
