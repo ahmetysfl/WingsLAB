@@ -135,50 +135,23 @@ int wait_for_timestamp(struct bladerf *dev, bladerf_module module,
 
 int sync_tx_meta_sched_example(struct bladerf *dev,
                              int16_t *samples, unsigned int num_samples,
-                             unsigned int tx_count, unsigned int samplerate,
+                             struct bladerf_metadata *meta,
                              unsigned int timeout_ms)
 {
     int status = 0;
     unsigned int i;
-    struct bladerf_metadata meta;
-    /* 5 ms timestamp increment */
-    const uint64_t ts_inc_5ms = ((uint64_t) samplerate) * 5 / 1000;
-    /* 150 ms timestamp increment */
-    const uint64_t ts_inc_150ms = ((uint64_t) samplerate) * 150 / 1000;
-    memset(&meta, 0, sizeof(meta));
-    /* Send entire burst worth of samples in one function call */
-    meta.flags = BLADERF_META_FLAG_TX_BURST_START |
-                 BLADERF_META_FLAG_TX_BURST_END;
-    /* Retrieve the current timestamp so we can schedule our transmission
-     * in the future. */
-    status = bladerf_get_timestamp(dev, BLADERF_MODULE_TX, &meta.timestamp);
+    status = bladerf_sync_tx(dev, samples, num_samples, meta, timeout_ms);
     if (status != 0) {
-        fprintf(stderr, "Failed to get current TX timestamp: %s\n",
-                bladerf_strerror(status));
+        fprintf(stderr, "TX failed: %s\n", bladerf_strerror(status));
         return status;
     } else {
-        printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
-    }
-    /* Set initial timestamp ~150 ms in the future */
-    meta.timestamp += ts_inc_150ms;
-    for (i = 0; i < tx_count && status == 0; i++) {
-        /* Get sample to transmit... */
-        produce_samples(samples, num_samples);
-        status = bladerf_sync_tx(dev, samples, num_samples, &meta, timeout_ms);
-        if (status != 0) {
-            fprintf(stderr, "TX failed: %s\n", bladerf_strerror(status));
-            return status;
-        } else {
-            printf("TX'd @ t=%016"PRIu64"\n", meta.timestamp);
-        }
-        /* Schedule next burst 5 ms into the future */
-        meta.timestamp += ts_inc_5ms;
+        printf("TX'd @ t=%016"PRIu64"\n", meta->timestamp);
     }
     /* Wait for samples to finish being transmitted. */
     if (status == 0) {
-        meta.timestamp += 2 * num_samples;
+        meta->timestamp += 2 * num_samples;
         status = wait_for_timestamp(dev, BLADERF_MODULE_TX,
-                                    meta.timestamp, timeout_ms);
+                                    meta->timestamp, timeout_ms);
         if (status != 0) {
             fprintf(stderr, "Failed to wait for timestamp.\n");
         }
@@ -298,6 +271,22 @@ int configure_module(struct bladerf *dev, struct module_config *c)
     return status;
 }
 
+int cnv2digital(float f)
+{
+    int i = f * 2048;
+
+    if (i>2047)
+    {
+        i=2047;
+    }
+    else if(i<-2048)
+    {
+        i=-2048;
+    }
+    return i;
+}
+
+
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
  *
@@ -311,6 +300,7 @@ int main(int argc, char *argv[])
     time_t rawtime;
     struct tm * timeinfo;
 
+    printf("LIQUID_FRAME64_LEN: %d",LIQUID_FRAME64_LEN);
     rawtime = time(NULL);
     fprintf(stderr,"Current Time: %d \n", time(NULL));
     delay(1000);
@@ -340,7 +330,7 @@ int main(int argc, char *argv[])
     fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
 
     /* Set up RX module parameters */
-    config.module     = BLADERF_MODULE_RX;
+    config.module     = BLADERF_MODULE_TX;
     config.frequency  = 2400000000;
     config.bandwidth  = 2000000;
     config.samplerate = 1000000;
@@ -349,11 +339,33 @@ int main(int argc, char *argv[])
     config.vga2       = 3;
     status = configure_module(dev, &config);
     if (status != 0) {
-        fprintf(stderr, "Failed to configure RX module. Exiting.\n");
-        goto out;
+        fprintf(stderr, "Failed to configure TX module. Exiting.\n");
     }
 
-   fprintf(stderr,"RX device is configured, Serial Number: %s \n",dev_info.serial);
+   fprintf(stderr,"TX device is configured, Serial Number: %s \n",dev_info.serial);
+
+   // options
+    unsigned int frame_counter   =   0;     // userdata passed to callback
+    // allocate memory for arrays
+    unsigned char header[8];                    // data header
+    unsigned char payload[64];                  // data payload
+    unsigned int  buf_len = LIQUID_FRAME64_LEN; // length of frame
+    float complex buf[buf_len];                 // sample buffer
+
+    // CREATE frame generator
+    framegen64 fg = framegen64_create();
+    framegen64_print(fg);
+
+    // initialize header, payload
+    unsigned int i;
+    for (i=0; i<8; i++)
+        header[i] = i;
+    for (i=0; i<64; i++)
+        payload[i] = rand() & 0xff;
+
+    // EXECUTE generator and assemble the frame
+    framegen64_execute(fg, header, payload, buf);
+
 
     /* Application code goes here.
      *
@@ -363,55 +375,50 @@ int main(int argc, char *argv[])
 
     /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
-    int16_t *rx_samples = NULL;
-    const unsigned int samples_len = 10000; /* May be any (reasonable) size */
+    int16_t *tx_samples = NULL;
+    const unsigned int samples_len = LIQUID_FRAME64_LEN; /* May be any (reasonable) size */
     /* Allocate a buffer to store received samples in */
-    rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
-    if (rx_samples == NULL) {
+
+    tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
+    if (tx_samples == NULL) {
         perror("malloc");
         return BLADERF_ERR_MEM;
     }
 
-    struct bladerf_metadata meta;
-    memset(&meta, 0, sizeof(meta));
-    /* Perform scheduled RXs by having meta.timestamp set appropriately
-     * and ensuring the BLADERF_META_FLAG_RX_NOW flag is cleared. */
-    meta.flags = 0;
-    /* Retrieve the current timestamp */
-    status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
-
-    meta.timestamp = meta.timestamp + 2000000;
-    if (status != 0) {
-        fprintf(stderr, "Failed to get current RX timestamp: %s\n",
-                bladerf_strerror(status));
-    } else {
-        fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
-    }
-
-
-
-    fprintf(stderr,"1- Current Time: %d \n", time(NULL));
-     sync_rx_example(dev,rx_samples,samples_len,&meta);
-    fprintf(stderr,"2- Current Time: %d \n", time(NULL));
-
-    status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
-    if (status != 0) {
-        fprintf(stderr, "Failed to get current RX timestamp: %s\n",
-                bladerf_strerror(status));
-    } else {
-        fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
-    }
-
-    /*
-     for(int i=0; i<samples_len; i++)
+    for(int i=0; i<samples_len; i++)
     {
-        printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
+        float real_part = crealf(buf[i]);
+        float img_part = cimagf(buf[i]);
+        tx_samples[2*i] = cnv2digital(real_part);
+        tx_samples[2*i + 1] = cnv2digital(img_part);
     }
-    */
+
+    struct bladerf_metadata meta;
+    /* 5 ms timestamp increment */
+    const uint64_t ts_inc_5ms = ((uint64_t) config.samplerate) * 5 / 1000;
+    /* 150 ms timestamp increment */
+    const uint64_t ts_inc_150ms = ((uint64_t) config.samplerate) * 150 / 1000;
+    memset(&meta, 0, sizeof(meta));
+    /* Send entire burst worth of samples in one function call */
+    meta.flags = BLADERF_META_FLAG_TX_BURST_START |
+                 BLADERF_META_FLAG_TX_BURST_END;
+    /* Retrieve the current timestamp so we can schedule our transmission
+     * in the future. */
+    status = bladerf_get_timestamp(dev, BLADERF_MODULE_TX, &meta.timestamp);
+    if (status != 0) {
+        fprintf(stderr, "Failed to get current TX timestamp: %s\n",
+                bladerf_strerror(status));
+        return status;
+    } else {
+        printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
+    }
+    /* Set initial timestamp ~150 ms in the future */
+    meta.timestamp += ts_inc_150ms;
+
+
+    sync_tx_meta_sched_example(dev,tx_samples,samples_len,&meta,5000);
 
 out:
     bladerf_close(dev);
-    /* Free up our resources */
-    free(rx_samples);
     return status;
 }

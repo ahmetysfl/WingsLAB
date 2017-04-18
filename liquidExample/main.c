@@ -79,6 +79,7 @@ int cnv2digital(float f)
     {
         i=-2048;
     }
+    return i;
 }
 int main() {
     // options
