@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-    sync_rx_meta(dev,rx_samples,samples_len,config.samplerate,5000);
+    sync_rx_meta(dev,rx_samples,samples_len,config.samplerate,10000);
 
     // create frame synchronizer using default properties
     framesync64 fs = framesync64_create(mycallback, (void*)&frame_counter);
