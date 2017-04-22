@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-    fprintf(stderr,"RX device is configured, Serial Number: %s \n",dev_info.serial);
+    fprintf(stderr,"RX device is configured,gfgfgfgg Serial Number: %s \n",dev_info.serial);
 
     /* Set up TX module parameters */
     config.module     = BLADERF_MODULE_TX;
