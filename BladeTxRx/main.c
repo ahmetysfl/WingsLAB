@@ -210,13 +210,14 @@ int main(int argc, char *argv[])
     }
     status = bladerf_open_with_devinfo(&dev, &dev_info);
 
+    fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
     if (status != 0) {
         fprintf(stderr, "Unable to open device: %s\n",
                 bladerf_strerror(status));
         return 1;
     }
 
-    fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
+
 
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
