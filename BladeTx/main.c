@@ -186,6 +186,9 @@ int sync_tx_meta(struct bladerf *dev,
     }
     /* Set initial timestamp ~300 ms in the future */
     meta.timestamp += 20*ts_inc_150ms;
+
+    printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
+
     for (i = 0; i < tx_count && status == 0; i++) {
         /* Get sample to transmit... */
         status = bladerf_sync_tx(dev, samples, num_samples, &meta, timeout_ms);
