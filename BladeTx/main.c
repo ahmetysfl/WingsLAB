@@ -385,14 +385,14 @@ int main(int argc, char *argv[])
         tx_samples[2*i]=cnv2digital(crealf(buf[i]));
         tx_samples[2*i+1]=cnv2digital(cimagf(buf[i]));
 
-        printf("I: %d, Q: %d \n",tx_samples[i],tx_samples[2*i+1]);
+        //printf("I: %d, Q: %d \n",tx_samples[i],tx_samples[2*i+1]);
     }
 
 
     sync_tx_meta(dev,tx_samples,samples_len,tx_count,config.samplerate,5000);
 
 out:
-    fprintf(stderr,"Connection is closed.");
+    fprintf(stderr,"Connection TX is closed.");
     // DESTROY objects
     framegen64_destroy(fg);
     bladerf_close(dev);
