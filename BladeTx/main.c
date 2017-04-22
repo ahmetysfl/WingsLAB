@@ -380,14 +380,6 @@ int main(int argc, char *argv[])
     // EXECUTE generator and assemble the frame
     framegen64_execute(fg, header, payload, buf);
 
-    for (i=0;i<2*samples_len;i++)
-    {
-        tx_samples[i]=cnv2digital(crealf(buf[i]));
-        tx_samples[2*i+1]=cnv2digital(cimagf(buf[i]));
-
-        printf("I: %d, Q: %d \n",tx_samples[i],tx_samples[2*i+1]);
-    }
-
 
     sync_tx_meta(dev,tx_samples,samples_len,tx_count,config.samplerate,5000);
 
