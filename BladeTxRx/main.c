@@ -266,6 +266,7 @@ int main(int argc, char *argv[])
                 bladerf_strerror(status));
         goto out;
     }
+
     fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
 
     status = bladerf_enable_module(dev, BLADERF_MODULE_TX, true);
@@ -274,6 +275,7 @@ int main(int argc, char *argv[])
                 bladerf_strerror(status));
         goto out;
     }
+
     fprintf(stderr, "Success to enable TX module: %s\n", bladerf_strerror(status));
 
 
