@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    printf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
+    fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
 
     /* Set up RX module parameters */
     config.module     = BLADERF_MODULE_RX;
