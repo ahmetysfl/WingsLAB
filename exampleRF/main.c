@@ -133,49 +133,6 @@ int wait_for_timestamp(struct bladerf *dev, bladerf_module module,
 }
 
 
-int sync_rx_example(struct bladerf *dev, int16_t * rx_samples, int samples_len,struct bladerf_metadata *meta)
-{
-    int status, ret;
-    bool have_tx_data = false;
-
-    /* Initialize synch interface on RX and TX modules */
-    status = init_sync_rx(dev);
-    if (status != 0) {
-        goto out;
-    }
-    status = bladerf_enable_module(dev, BLADERF_MODULE_RX, true);
-    if (status != 0) {
-        fprintf(stderr, "Failed to enable RX module: %s\n",
-                bladerf_strerror(status));
-        goto out;
-    }
-    fprintf(stderr, "Success to enable RX module: %s\n", bladerf_strerror(status));
-
-    // Receive Samples From Modules
-    status = bladerf_sync_rx(dev, rx_samples, samples_len, meta, 10000);
-    if (status != 0) {
-        fprintf(stderr, "Failed to RX samples: %s\n", bladerf_strerror(status));
-    }
-    status = 1;
-
-
-
-out:
-    ret = status;
-    /* Disable RX module, shutting down our underlying RX stream */
-    status = bladerf_enable_module(dev, BLADERF_MODULE_RX, false);
-    if (status != 0) {
-        fprintf(stderr, "Failed to disable RX module: %s\n",
-                bladerf_strerror(status));
-    }
-    /* Disable TX module, shutting down our underlying TX stream */
-    status = bladerf_enable_module(dev, BLADERF_MODULE_TX, false);
-    if (status != 0) {
-        fprintf(stderr, "Failed to disable TX module: %s\n",
-                bladerf_strerror(status));
-    }
-    return ret;
-}
 
 
 int configure_module(struct bladerf *dev, struct module_config *c)
