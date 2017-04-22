@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 
     for (i=0;i<samples_len;i++)
     {
-        tx_samples[i]=cnv2digital(crealf(buf[i]));
+        tx_samples[2*i]=cnv2digital(crealf(buf[i]));
         tx_samples[2*i+1]=cnv2digital(cimagf(buf[i]));
 
         printf("I: %d, Q: %d \n",tx_samples[i],tx_samples[2*i+1]);
@@ -393,6 +393,8 @@ int main(int argc, char *argv[])
 
 out:
     fprintf(stderr,"Connection is closed.");
+    // DESTROY objects
+    framegen64_destroy(fg);
     bladerf_close(dev);
     return status;
 }

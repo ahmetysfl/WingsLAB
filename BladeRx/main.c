@@ -179,6 +179,28 @@ int sync_rx_meta(struct bladerf *dev, int16_t *samples, unsigned int samples_len
     return status;
 }
 
+
+// user-defined static callback function
+static int mycallback(unsigned char *  _header,
+                      int              _header_valid,
+                      unsigned char *  _payload,
+                      unsigned int     _payload_len,
+                      int              _payload_valid,
+                      framesyncstats_s _stats,
+                      void *           _userdata)
+{
+    //printf("***** callback invoked!\n");
+    //printf("    header  (%s)\n",  _header_valid ? "valid" : "INVALID");
+    //printf("    payload (%s)\n", _payload_valid ? "valid" : "INVALID");
+    //framesyncstats_print(&_stats);
+
+    // type-cast, de-reference, and increment frame counter
+    unsigned int * counter = (unsigned int *) _userdata;
+    (*counter)++;
+    printf("Frame Counter: %d, \n",*counter);
+    return 0;
+}
+
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
  *
@@ -190,6 +212,7 @@ int sync_rx_meta(struct bladerf *dev, int16_t *samples, unsigned int samples_len
 int main(int argc, char *argv[])
 {
     int status;
+    unsigned int frame_counter   =   0;     // userdata passed to callback
     struct module_config config;
     struct bladerf *dev = NULL;
     struct bladerf_devinfo dev_info;
@@ -302,10 +325,28 @@ int main(int argc, char *argv[])
 
     sync_rx_meta(dev,rx_samples,samples_len,config.samplerate,5000);
 
-    for (int i=0;i<2*samples_len;i++)
-    {
-        printf("I: %d , Q: %d \n",rx_samples[i],rx_samples[2*i+1]);
+    // create frame synchronizer using default properties
+    framesync64 fs = framesync64_create(mycallback, (void*)&frame_counter);
+    framesync64_print(fs);
+    float * rx_buf;
+    rx_buf = malloc(samples_len * sizeof(float complex));
+    if (rx_buf == NULL) {
+        perror("malloc");
+        return BLADERF_ERR_MEM;
     }
+
+
+     for(int i=0; i<samples_len; i++)
+    {
+        rx_buf[i] = rx_samples[2*i]/2048 + _Complex_I * rx_samples[2*i+1]/2048;
+    }
+
+    framesync64_execute(fs, rx_samples, samples_len);
+    framesync64_destroy(fs);
+
+    printf("received %u frames\n", frame_counter);
+    printf("done.\n");
+    return 0;
 
 
 out:

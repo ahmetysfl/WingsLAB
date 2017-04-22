@@ -201,6 +201,28 @@ int configure_module(struct bladerf *dev, struct module_config *c)
     return status;
 }
 
+// user-defined static callback function
+static int mycallback(unsigned char *  _header,
+                      int              _header_valid,
+                      unsigned char *  _payload,
+                      unsigned int     _payload_len,
+                      int              _payload_valid,
+                      framesyncstats_s _stats,
+                      void *           _userdata)
+{
+    //printf("***** callback invoked!\n");
+    //printf("    header  (%s)\n",  _header_valid ? "valid" : "INVALID");
+    //printf("    payload (%s)\n", _payload_valid ? "valid" : "INVALID");
+    framesyncstats_print(&_stats);
+
+    // type-cast, de-reference, and increment frame counter
+    unsigned int * counter = (unsigned int *) _userdata;
+    (*counter)++;
+
+    return 0;
+}
+
+
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
  *
@@ -211,6 +233,7 @@ int configure_module(struct bladerf *dev, struct module_config *c)
  */
 int main(int argc, char *argv[])
 {
+    unsigned int frame_counter   =   0;     // userdata passed to callback
     time_t rawtime;
     struct tm * timeinfo;
 
@@ -305,10 +328,24 @@ int main(int argc, char *argv[])
         fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
     }
 
+
+    // create frame synchronizer using default properties
+    framesync64 fs = framesync64_create(mycallback, (void*)&frame_counter);
+    framesync64_print(fs);
+    float complex rx_buf[samples_len];
+
+
      for(int i=0; i<samples_len; i++)
     {
-        printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
+        rx_buf[i] = rx_samples[2*i]/2048 + _Complex_I * rx_samples[2*i+1]/2048;
     }
+
+    framesync64_execute(fs, rx_samples, samples_len);
+    framesync64_destroy(fs);
+
+    printf("received %u frames\n", frame_counter);
+    printf("done.\n");
+    return 0;
 
 out:
     bladerf_close(dev);
