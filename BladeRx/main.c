@@ -201,6 +201,23 @@ static int mycallback(unsigned char *  _header,
     return 0;
 }
 
+
+
+int cnv2digital(float f)
+{
+    int i = f * 2048;
+
+    if (i>2047)
+    {
+        i=2047;
+    }
+    else if(i<-2048)
+    {
+        i=-2048;
+    }
+    return i;
+}
+
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
  *
@@ -325,6 +342,23 @@ int main(int argc, char *argv[])
 
     sync_rx_meta(dev,rx_samples,samples_len,config.samplerate,10000);
 
+     FILE * pFile;
+    char stringLine[16];
+    pFile = fopen ("rxBlade.csv", "wb");
+    // print a few of the generated frame samples to the screen
+    for (int i=0; i<samples_len; i++)
+    {
+        float real_part = crealf(rx_samples[i]);
+        float img_part = cimagf(rx_samples[i]);
+
+        fprintf (pFile , "%d,%d\n",cnv2digital(real_part), cnv2digital(img_part));
+        //printf("%3u : %12.8f + j*%12.8f\n", i, real_part, img_part);
+        //printf("___ : %d + j*%d\n\n", cnv2digital(real_part), cnv2digital(img_part));
+    }
+
+    fclose(pFile);
+
+    /*
     // create frame synchronizer using default properties
     framesync64 fs = framesync64_create(mycallback, (void*)&frame_counter);
     framesync64_print(fs);
@@ -341,7 +375,7 @@ int main(int argc, char *argv[])
         float I_data = (float)rx_samples[2*i]/2048;
         float Q_data = (float) rx_samples[2*i+1]/2048;
 
-        //printf("I: %f, Q: %f \n",I_data,Q_data);
+        //printf("I: %f, Q: %f \n",I_data,Q_data)
         rx_buf[i] = I_data + _Complex_I * Q_data;
     }
 
@@ -350,6 +384,7 @@ int main(int argc, char *argv[])
 
     printf("received %u frames\n", frame_counter);
     printf("done.\n");
+    */
     return 0;
 
 
