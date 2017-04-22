@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
     /* Allocate a buffer to store received samples in */
     tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
 
-    int tx_count = 1;
+    int tx_count = 10;
 
     if (tx_samples == NULL) {
         perror("malloc");
