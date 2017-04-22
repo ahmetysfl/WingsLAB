@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
         rx_buf[i] = (float)rx_samples[2*i]/2048 + _Complex_I * (float) rx_samples[2*i+1]/2048;
     }
 
-    framesync64_execute(fs, rx_samples, samples_len);
+    framesync64_execute(fs, rx_buf, samples_len);
     framesync64_destroy(fs);
 
     printf("received %u frames\n", frame_counter);
