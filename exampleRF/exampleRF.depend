@@ -1,11 +1,15 @@
 # depslib dependency file v1.0
-1492461066 source:/home/ahmet/gitExample/exampleRF/main.c
+1492846481 source:/home/ahmet/gitExample/exampleRF/main.c
 	<stdlib.h>
 	<string.h>
 	<stdio.h>
 	<libbladeRF.h>
 	<time.h>
 	<inttypes.h>
+	<math.h>
+	<string.h>
+	<complex.h>
+	<liquid/liquid.h>
 
 1460671772 /usr/include//stdio.h
 	<features.h>
@@ -233,4 +237,11 @@
 	<features.h>
 	<stdint.h>
 	<stddef.h>
+
+1460671768 /usr/include//complex.h
+	<features.h>
+	<bits/mathdef.h>
+	<bits/cmathcalls.h>
+	<bits/cmathcalls.h>
+	<bits/cmathcalls.h>
 
