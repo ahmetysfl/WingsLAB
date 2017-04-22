@@ -194,12 +194,13 @@ int sync_tx_meta(struct bladerf *dev,
         status = bladerf_sync_tx(dev, samples, num_samples, &meta, timeout_ms);
         if (status != 0) {
             fprintf(stderr, "TX failed: %s\n", bladerf_strerror(status));
+
             return status;
         } else {
             printf("TX'd @ t=%016"PRIu64"\n", meta.timestamp);
         }
         /* Schedule next burst 5 ms into the future */
-        meta.timestamp += 10*ts_inc_1ms;
+        meta.timestamp += 5*ts_inc_1ms;
     }
     /* Wait for samples to finish being transmitted. */
     if (status == 0) {
