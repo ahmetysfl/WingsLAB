@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
     /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
     int16_t *rx_samples = NULL;
-    const unsigned int samples_len = 100000; /* May be any (reasonable) size */
+    const unsigned int samples_len = 5000000; /* May be any (reasonable) size */
     /* Allocate a buffer to store received samples in */
     rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
     if (rx_samples == NULL) {
