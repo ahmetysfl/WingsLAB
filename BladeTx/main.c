@@ -200,7 +200,7 @@ int sync_tx_meta(struct bladerf *dev,
             printf("TX'd @ t=%016"PRIu64"\n", meta.timestamp);
         }
         /* Schedule next burst 5 ms into the future */
-        meta.timestamp += 5*ts_inc_1ms;
+        meta.timestamp += 10*ts_inc_1ms;
     }
     /* Wait for samples to finish being transmitted. */
     if (status == 0) {
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
     /* Allocate a buffer to store received samples in */
     tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
 
-    int tx_count = 33;
+    int tx_count = 20;
 
     if (tx_samples == NULL) {
         perror("malloc");
