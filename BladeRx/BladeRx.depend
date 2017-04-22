@@ -1,11 +1,49 @@
 # depslib dependency file v1.0
-1492461771 source:/home/ahmet/gitExample/liquidExample/main.c
-	<stdio.h>
+1492854751 source:/home/ahmet/gitExample/BladeRx/main.c
 	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<libbladeRF.h>
+	<time.h>
+	<inttypes.h>
 	<math.h>
 	<string.h>
 	<complex.h>
 	<liquid/liquid.h>
+
+1460671771 /usr/include//stdlib.h
+	<features.h>
+	<stddef.h>
+	<bits/waitflags.h>
+	<bits/waitstatus.h>
+	<xlocale.h>
+	<sys/types.h>
+	<alloca.h>
+	<bits/stdlib-bsearch.h>
+	<bits/stdlib-float.h>
+	<bits/stdlib.h>
+	<bits/stdlib-ldbl.h>
+
+1460671745 /usr/include//features.h
+	<stdc-predef.h>
+	<sys/cdefs.h>
+	<gnu/stubs.h>
+
+1460671745 /usr/include//stdc-predef.h
+
+1460671746 /usr/include//xlocale.h
+
+1460671771 /usr/include//alloca.h
+	<features.h>
+	<stddef.h>
+
+1460671775 /usr/include//string.h
+	<features.h>
+	<stddef.h>
+	<xlocale.h>
+	<bits/string.h>
+	<bits/string2.h>
+	<bits/string3.h>
 
 1460671772 /usr/include//stdio.h
 	<features.h>
@@ -19,13 +57,6 @@
 	<bits/stdio.h>
 	<bits/stdio2.h>
 	<bits/stdio-ldbl.h>
-
-1460671745 /usr/include//features.h
-	<stdc-predef.h>
-	<sys/cdefs.h>
-	<gnu/stubs.h>
-
-1460671745 /usr/include//stdc-predef.h
 
 1460671772 /usr/include//libio.h
 	<_G_config.h>
@@ -66,8 +97,6 @@
 	<bits/endian.h>
 	<bits/byteswap.h>
 
-1460671746 /usr/include//xlocale.h
-
 1460671745 /usr/include//gconv.h
 	<features.h>
 	<wchar.h>
@@ -82,21 +111,31 @@
 	<endian.h>
 	<xlocale.h>
 
-1460671771 /usr/include//stdlib.h
+1467235489 /usr/include//libbladeRF.h
+	<stdint.h>
+	<stdlib.h>
+	<stdbool.h>
+	<windows.h>
+
+1460671771 /usr/include//stdint.h
+	<features.h>
+	<bits/wchar.h>
+	<bits/wordsize.h>
+
+1460671777 /usr/include//time.h
 	<features.h>
 	<stddef.h>
-	<bits/waitflags.h>
-	<bits/waitstatus.h>
+	<bits/time.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
+	<bits/types.h>
 	<xlocale.h>
-	<sys/types.h>
-	<alloca.h>
-	<bits/stdlib-bsearch.h>
-	<bits/stdlib-float.h>
-	<bits/stdlib.h>
-	<bits/stdlib-ldbl.h>
 
-1460671771 /usr/include//alloca.h
+1460671771 /usr/include//inttypes.h
 	<features.h>
+	<stdint.h>
 	<stddef.h>
 
 1460671768 /usr/include//math.h
