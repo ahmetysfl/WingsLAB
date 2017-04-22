@@ -185,7 +185,7 @@ int sync_tx_meta(struct bladerf *dev,
         printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
     }
     /* Set initial timestamp ~300 ms in the future */
-    meta.timestamp += 20*ts_inc_150ms;
+    //meta.timestamp += 20*ts_inc_150ms;
 
     printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
 
