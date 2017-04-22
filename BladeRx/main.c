@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
         float I_data = (float)rx_samples[2*i]/2048;
         float Q_data = (float) rx_samples[2*i+1]/2048;
 
-        printf("I: %f, Q: %f \n",I_data,Q_data);
+        //printf("I: %f, Q: %f \n",I_data,Q_data);
         rx_buf[i] = I_data + _Complex_I * Q_data;
     }
 
