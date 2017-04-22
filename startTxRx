@@ -1,3 +1,2 @@
 ./BladeRx/bin/Debug/BladeRx &
-sleep 1
 ./BladeTx/bin/Debug/BladeTx &
