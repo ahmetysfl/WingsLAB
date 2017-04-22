@@ -330,7 +330,7 @@ int main(int argc, char *argv[])
     /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
     int16_t *tx_samples = NULL;
-    const unsigned int samples_len = 2000; /* May be any (reasonable) size */
+    const unsigned int samples_len = LIQUID_FRAME64_LEN; /* May be any (reasonable) size */
     /* Allocate a buffer to store received samples in */
     tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
 
@@ -358,8 +358,13 @@ int main(int argc, char *argv[])
     unsigned int frame_counter   =   0;     // userdata passed to callback
     // allocate memory for arrays
     unsigned char header[8];                    // data header
-    unsigned char payload[64];                  // data payload
-    float complex buf[LIQUID_FRAME64_LEN];                 // sample buffer
+    unsigned char payload[64];
+    float * buf;
+    buf = malloc(samples_len * sizeof(float complex));
+    if (buf == NULL) {
+        perror("malloc");
+        return BLADERF_ERR_MEM;
+    }
 
     // CREATE frame generator
     framegen64 fg = framegen64_create();
