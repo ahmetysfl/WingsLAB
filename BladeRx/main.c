@@ -160,7 +160,7 @@ int sync_rx_meta(struct bladerf *dev, int16_t *samples, unsigned int samples_len
         printf("Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
     }
     /* Schedule first RX to be 150 ms in the future */
-    meta.timestamp += ts_inc_150ms;
+    //meta.timestamp += ts_inc_150ms;
     /* Receive samples and do work on them */
     status = bladerf_sync_rx(dev, samples, samples_len,
                              &meta, 2 * timeout_ms);
