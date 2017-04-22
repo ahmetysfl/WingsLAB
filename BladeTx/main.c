@@ -214,6 +214,21 @@ int sync_tx_meta(struct bladerf *dev,
     return status;
 }
 
+int cnv2digital(float f)
+{
+    int i = f * 2048;
+
+    if (i>2047)
+    {
+        i=2047;
+    }
+    else if(i<-2048)
+    {
+        i=-2048;
+    }
+    return i;
+}
+
 
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
@@ -319,7 +334,7 @@ int main(int argc, char *argv[])
     /* Allocate a buffer to store received samples in */
     tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
 
-    int tx_count = 20;
+    int tx_count = 10;
 
     if (tx_samples == NULL) {
         perror("malloc");
@@ -338,6 +353,36 @@ int main(int argc, char *argv[])
                 bladerf_strerror(status));
         goto out;
     }
+
+
+    unsigned int frame_counter   =   0;     // userdata passed to callback
+    // allocate memory for arrays
+    unsigned char header[8];                    // data header
+    unsigned char payload[64];                  // data payload
+    float complex buf[LIQUID_FRAME64_LEN];                 // sample buffer
+
+    // CREATE frame generator
+    framegen64 fg = framegen64_create();
+    framegen64_print(fg);
+
+    // initialize header, payload
+    unsigned int i;
+    for (i=0; i<8; i++)
+        header[i] = i;
+    for (i=0; i<64; i++)
+        payload[i] = i & 0xff;
+
+    // EXECUTE generator and assemble the frame
+    framegen64_execute(fg, header, payload, buf);
+
+    for (i=0;i<2*samples_len;i++)
+    {
+        tx_samples[i]=cnv2digital(crealf(buf[i]));
+        tx_samples[2*i+1]=cnv2digital(cimagf(buf[i]));
+
+        printf("I: %d, Q: %d \n",tx_samples[i],tx_samples[2*i+1]);
+    }
+
 
     sync_tx_meta(dev,tx_samples,samples_len,tx_count,config.samplerate,5000);
 
