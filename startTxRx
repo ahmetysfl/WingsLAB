@@ -1,3 +1,3 @@
 ./BladeRx/bin/Debug/BladeRx 62fd1f9210e0940a2c22f705056305cb &
 sleep 1
-./BladeTx/bin/Debug/BladeTx &
+./BladeTx/bin/Debug/BladeTx f005b46aa0600603344a9c3d1c684125 &
