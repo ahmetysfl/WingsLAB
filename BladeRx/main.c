@@ -189,10 +189,10 @@ static int mycallback(unsigned char *  _header,
                       framesyncstats_s _stats,
                       void *           _userdata)
 {
-    //printf("***** callback invoked!\n");
-    //printf("    header  (%s)\n",  _header_valid ? "valid" : "INVALID");
-    //printf("    payload (%s)\n", _payload_valid ? "valid" : "INVALID");
-    //framesyncstats_print(&_stats);
+    printf("***** callback invoked!\n");
+    printf("    header  (%s)\n",  _header_valid ? "valid" : "INVALID");
+    printf("    payload (%s)\n", _payload_valid ? "valid" : "INVALID");
+    framesyncstats_print(&_stats);
 
     // type-cast, de-reference, and increment frame counter
     unsigned int * counter = (unsigned int *) _userdata;
