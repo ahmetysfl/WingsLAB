@@ -90,7 +90,7 @@ static int init_sync_rx(struct bladerf *dev)
     const unsigned int num_transfers = 8;
     const unsigned int timeout_ms    = 3500;
     /* Configure both the device's RX and TX modules for use with the synchronous
-     * interface. SC16 Q11 samples *without* metadata are used. */
+     * interface. SC16 Q11 samples *with* metadata are used. */
     status = bladerf_sync_config(dev,
                                  BLADERF_MODULE_RX,
                                  BLADERF_FORMAT_SC16_Q11_META,

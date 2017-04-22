@@ -347,6 +347,18 @@ int main(int argc, char *argv[])
 
     fprintf(stderr,"Device is selected, Serial Number: %s \n",dev_info.serial);
 
+    /* Set up RX module parameters */
+    config.module     = BLADERF_MODULE_RX;
+    config.frequency  = 2400000000;
+    config.bandwidth  = 2000000;
+    config.samplerate = 1000000;
+    config.rx_lna     = BLADERF_LNA_GAIN_MAX;
+    config.vga1       = 30;
+    config.vga2       = 3;
+    status = configure_module(dev, &config);
+    if (status != 0) {
+        fprintf(stderr, "Failed to configure RX module. Exiting.\n");
+    }
     /* Set up TX module parameters */
     config.module     = BLADERF_MODULE_TX;
     config.frequency  = 2400000000;
@@ -354,7 +366,6 @@ int main(int argc, char *argv[])
     config.samplerate = 1000000;
     config.vga1       = -14;
     config.vga2       = 0;
-
     status = configure_module(dev, &config);
     if (status != 0) {
         fprintf(stderr, "Failed to configure TX module. Exiting.\n");
