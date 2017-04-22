@@ -328,7 +328,7 @@ int main(int argc, char *argv[])
     // create frame synchronizer using default properties
     framesync64 fs = framesync64_create(mycallback, (void*)&frame_counter);
     framesync64_print(fs);
-    float * rx_buf;
+    float complex* rx_buf;
     rx_buf = malloc(samples_len * sizeof(float complex));
     if (rx_buf == NULL) {
         perror("malloc");
