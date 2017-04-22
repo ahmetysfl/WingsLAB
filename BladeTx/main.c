@@ -89,7 +89,6 @@ int configure_module(struct bladerf *dev, struct module_config *c)
     return status;
 }
 
-
 static int init_sync(struct bladerf *dev)
 {
     int status;
@@ -135,49 +134,82 @@ static int init_sync(struct bladerf *dev)
     return status;
 }
 
-
-
-int sync_rx_meta(struct bladerf *dev, int16_t *samples, unsigned int samples_len, unsigned int samplerate,
-                               unsigned int timeout_ms)
+int wait_for_timestamp(struct bladerf *dev, bladerf_module module,
+                       uint64_t timestamp, unsigned int timeout_ms)
 {
     int status;
-    struct bladerf_metadata meta;
-    unsigned int i;
-    /* 150 ms timestamp increment */
-    const uint64_t ts_inc_150ms = ((uint64_t) samplerate) * 150 / 1000;
-    /* 1 ms timestamp increment */
-    const uint64_t ts_inc_1ms = samplerate / 1000;
-    memset(&meta, 0, sizeof(meta));
-    /* Perform scheduled RXs by having meta.timestamp set appropriately
-     * and ensuring the BLADERF_META_FLAG_RX_NOW flag is cleared. */
-    meta.flags = 0;
-    /* Retrieve the current timestamp */
-    status = bladerf_get_timestamp(dev, BLADERF_MODULE_RX, &meta.timestamp);
-    if (status != 0) {
-        fprintf(stderr, "Failed to get current RX timestamp: %s\n",
-                bladerf_strerror(status));
-    } else {
-        printf("Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
-    }
-    /* Schedule first RX to be 150 ms in the future */
-    meta.timestamp += ts_inc_150ms;
-    /* Receive samples and do work on them */
-    status = bladerf_sync_rx(dev, samples, samples_len,
-                             &meta, 2 * timeout_ms);
-    if (status != 0) {
-        fprintf(stderr, "Scheduled RX failed: %s\n\n",
-                bladerf_strerror(status));
-    } else if (meta.status & BLADERF_META_STATUS_OVERRUN) {
-        fprintf(stderr, "Overrun detected in scheduled RX. "
-                "%u valid samples were read.\n\n", meta.actual_count);
-    } else {
-        printf("RX'd %u samples at t=0x%016"PRIx64"\n",
-               meta.actual_count, meta.timestamp);
-        fflush(stdout);
-    }
-
+    uint64_t curr_ts = 0;
+    unsigned int slept_ms = 0;
+    bool done;
+    do {
+        status = bladerf_get_timestamp(dev, module, &curr_ts);
+        done = (status != 0) || curr_ts >= timestamp;
+        if (!done) {
+            if (slept_ms > timeout_ms) {
+                done = true;
+                status = BLADERF_ERR_TIMEOUT;
+            } else {
+                usleep(10000);
+                slept_ms += 10;
+            }
+        }
+    } while (!done);
     return status;
 }
+
+
+int sync_tx_meta(struct bladerf *dev,
+                             int16_t *samples, unsigned int num_samples,
+                             unsigned int tx_count, unsigned int samplerate,
+                             unsigned int timeout_ms)
+{
+    int status = 0;
+    unsigned int i;
+    struct bladerf_metadata meta;
+    /* 5 ms timestamp increment */
+    const uint64_t ts_inc_1ms = ((uint64_t) samplerate) * 1 / 1000;
+    /* 150 ms timestamp increment */
+    const uint64_t ts_inc_150ms = ((uint64_t) samplerate) * 150 / 1000;
+    memset(&meta, 0, sizeof(meta));
+    /* Send entire burst worth of samples in one function call */
+    meta.flags = BLADERF_META_FLAG_TX_BURST_START |
+                 BLADERF_META_FLAG_TX_BURST_END;
+    /* Retrieve the current timestamp so we can schedule our transmission
+     * in the future. */
+    status = bladerf_get_timestamp(dev, BLADERF_MODULE_TX, &meta.timestamp);
+    if (status != 0) {
+        fprintf(stderr, "Failed to get current TX timestamp: %s\n",
+                bladerf_strerror(status));
+        return status;
+    } else {
+        printf("Current TX timestamp: %016"PRIu64"\n", meta.timestamp);
+    }
+    /* Set initial timestamp ~300 ms in the future */
+    meta.timestamp += 2*ts_inc_150ms;
+    for (i = 0; i < tx_count && status == 0; i++) {
+        /* Get sample to transmit... */
+        status = bladerf_sync_tx(dev, samples, num_samples, &meta, timeout_ms);
+        if (status != 0) {
+            fprintf(stderr, "TX failed: %s\n", bladerf_strerror(status));
+            return status;
+        } else {
+            printf("TX'd @ t=%016"PRIu64"\n", meta.timestamp);
+        }
+        /* Schedule next burst 5 ms into the future */
+        meta.timestamp += ts_inc_1ms;
+    }
+    /* Wait for samples to finish being transmitted. */
+    if (status == 0) {
+        meta.timestamp += 2 * num_samples;
+        status = wait_for_timestamp(dev, BLADERF_MODULE_TX,
+                                    meta.timestamp, timeout_ms);
+        if (status != 0) {
+            fprintf(stderr, "Failed to wait for timestamp.\n");
+        }
+    }
+    return status;
+}
+
 
 /* Usage:
  *   libbladeRF_example_boilerplate [serial #]
@@ -278,11 +310,14 @@ int main(int argc, char *argv[])
 
     /* "User" samples buffers and their associated sizes, in units of samples.
      * Recall that one sample = two int16_t values. */
-    int16_t *rx_samples = NULL;
-    const unsigned int samples_len = 100000; /* May be any (reasonable) size */
+    int16_t *tx_samples = NULL;
+    const unsigned int samples_len = 2000; /* May be any (reasonable) size */
     /* Allocate a buffer to store received samples in */
-    rx_samples = malloc(samples_len * 2 * sizeof(int16_t));
-    if (rx_samples == NULL) {
+    tx_samples = malloc(samples_len * 2 * sizeof(int16_t));
+
+    int tx_count = 33;
+
+    if (tx_samples == NULL) {
         perror("malloc");
         return BLADERF_ERR_MEM;
     }
@@ -300,13 +335,7 @@ int main(int argc, char *argv[])
         goto out;
     }
 
-    sync_rx_meta(dev,rx_samples,samples_len,config.samplerate,5000);
-
-    for (int i=0;i<2*samples_len;i++)
-    {
-        printf("I: %d , Q: %d \n",rx_samples[i],rx_samples[2*i+1]);
-    }
-
+    sync_tx_meta(dev,tx_samples,samples_len,tx_count,config.samplerate,5000);
 
 out:
     fprintf(stderr,"Connection is closed.");

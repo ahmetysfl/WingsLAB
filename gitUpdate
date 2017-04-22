@@ -1,3 +1,4 @@
 git add *
+git rm *
 git commit -m "AE"
 git push origin master
