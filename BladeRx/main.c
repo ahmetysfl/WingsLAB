@@ -338,7 +338,11 @@ int main(int argc, char *argv[])
 
      for(int i=0; i<samples_len; i++)
     {
-        rx_buf[i] = (float)rx_samples[2*i]/2048 + _Complex_I * (float) rx_samples[2*i+1]/2048;
+        float I_data = (float)rx_samples[2*i]/2048;
+        float Q_data = (float) rx_samples[2*i+1]/2048;
+
+        printf("I: %f, Q: %f \n",I_data,Q_data);
+        rx_buf[i] = I_data + _Complex_I * Q_data;
     }
 
     framesync64_execute(fs, rx_buf, samples_len);
