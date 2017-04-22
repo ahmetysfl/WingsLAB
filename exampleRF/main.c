@@ -348,12 +348,10 @@ int main(int argc, char *argv[])
         fprintf(stderr,"Current RX timestamp: 0x%016"PRIx64"\n", meta.timestamp);
     }
 
-    /*
      for(int i=0; i<samples_len; i++)
     {
         printf("I: %d, Q: %d \n",rx_samples[2*i],rx_samples[2*i+1]);
     }
-    */
 
 out:
     bladerf_close(dev);
