@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     for (i=0; i<payload_len; i++)
         payload[i] = rand() & 0xff;
 
-    fec1          =  8;
+    fec1          =  10;
     char s[256];
     sprintf(s,"log%d.txt",fec1);
     logFile = fopen (s, "a+");
