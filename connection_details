@@ -1,0 +1,11 @@
+------------------------------------------
+Username: S1G03
+Password: 6ZegTOzw
+----
+ssh S1G03@winscenter.ceng.metu.edu.tr -p 8081
+winscli5
+
+/usr/lib/x86_64-linux-gnu/
+
+cd ../../.. & git pull origin master
+
