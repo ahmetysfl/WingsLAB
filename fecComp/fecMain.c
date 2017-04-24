@@ -32,7 +32,7 @@ unsigned char * payload;
 FILE* logFile;
 const int  header_len = 8;
 const int  payload_len = 480;
-int noBitError = 0;
+int noBitError = -1;
 int validHeader = 0;
 int frameDetected = 0;
 // options
@@ -41,7 +41,7 @@ modulation_scheme ms     =  LIQUID_MODEM_QPSK; // mod. scheme
 crc_scheme check         =  LIQUID_CRC_NONE;     // data validity check
 fec_scheme fec0          =  LIQUID_FEC_NONE;   // fec (inner)
 fec_scheme fec1          =  LIQUID_FEC_NONE;   // fec (outer)
-float SNRdB       =  20.0f; // signal-to-noise ratio            // signal-to-noise ratio
+float SNRdB       =  8.0f; // signal-to-noise ratio            // signal-to-noise ratio
 
 // flexframesync callback function
 static int callback(unsigned char *  _header,
@@ -54,10 +54,17 @@ static int callback(unsigned char *  _header,
 
 int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_scheme fec1,float SNRdB)
 {
+    int i = 0;
+
+    // initialize header, payload
+    for (i=0; i<header_len; i++)
+        header[i] = i;
+    for (i=0; i<payload_len; i++)
+        payload[i] = rand() & 0xff;
 
         // payload length
     int debug_enabled        =  0;                 // enable debugging?
-    float noise_floor        = -40.0f;             // noise floor
+    float noise_floor        = -10.0f;             // noise floor
     float dphi               =  0.01f;             // carrier frequency offset
 
 
@@ -94,22 +101,40 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
         // write samples to buffer
         frame_complete = flexframegen_write_samples(fg, x, buf_len);
 
+        /*
+        FILE * xFile;
+        char s[256];
+        sprintf(s,"log_frame.txt");
+        xFile = fopen (s, "a+");
+        for (i=0; i<buf_len; i++)
+        {
+            fprintf(xFile,"%f;%f\n",crealf(x[i]),cimagf(x[i]));
+        }
+
+        fclose(xFile);
+        */
         if(!frame_complete)
         {
             printf("Error buf is not suffiecnt");
             return 0;
         }
         // add noise and push through synchronizer
-        for (int i=0; i<buf_len; i++) {
+        for (i=0; i<buf_len; i++) {
             // apply channel gain and carrier offset to input
             y[i] = gamma * x[i] * cexpf(_Complex_I*phi);
             phi += dphi;
-
             // add noise
             y[i] += nstd*( randnf() + _Complex_I*randnf())*M_SQRT1_2;
         }
-
-
+        /*
+        sprintf(s,"log_frame_SNR.txt");
+        xFile = fopen (s, "a+");
+        for (i=0; i<buf_len; i++)
+        {
+            fprintf(xFile,"%f;%f\n",crealf(y[i]),cimagf(y[i]));
+        }
+        fclose(xFile);
+        */
         // run through frame synchronizer
         flexframesync_execute(fs, y, buf_len);
 
@@ -129,7 +154,7 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
 int main(int argc, char *argv[])
 {
 
-
+    int i=0;
     //srand( time(NULL) );
     payload = malloc(payload_len* sizeof(unsigned char));
     if (payload == NULL) {
@@ -141,13 +166,6 @@ int main(int argc, char *argv[])
         perror("malloc");
         return 0;
     }
-
-    // initialize header, payload
-    unsigned int i;
-    for (i=0; i<header_len; i++)
-        header[i] = i;
-    for (i=0; i<payload_len; i++)
-        payload[i] = rand() & 0xff;
 
     fec1          =  10;
     char s[256];
@@ -167,24 +185,57 @@ int main(int argc, char *argv[])
     flexframegen_assemble(fg, header, payload, payload_len);
     flexframegen_print2(logFile,fg);
     flexframegen_destroy(fg);
-    int noTrials = 250;
-    fprintf(logFile,"SNRdB,bitErrorRate,Valid Header,Detected Frame\n");
+    int noTrials = 81;
+    //int noTrials = 81;
+    fprintf(logFile,"SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame\n");
     fclose(logFile);
+    int bitErrorVector[10];
+
+        sprintf(s,"log%d.txt",fec1);
+        logFile = fopen (s, "a+");
     for (i=0; i<noTrials; i++)
     {
         simulateFrame (ms,check,fec0,fec1,SNRdB);
-        char s[256];
-        sprintf(s,"log%d.txt",fec1);
-        logFile = fopen (s, "a+");
-        fprintf(logFile,"%f,%d,%d,%d \n",SNRdB,noBitError,validHeader,frameDetected);
-        fclose(logFile);
-        SNRdB = SNRdB - 0.25;
-        noBitError=0;
+        bitErrorVector[0]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[1]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[2]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[3]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[4]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[5]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[6]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[7]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[8]=noBitError;
+        noBitError=-1;
+        simulateFrame (ms,check,fec0,fec1,SNRdB);
+        bitErrorVector[9]=noBitError;
+        noBitError=-1;
+
+
+        fprintf(logFile,"%f;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d \n",
+                SNRdB,bitErrorVector[0],bitErrorVector[1],bitErrorVector[2],bitErrorVector[3],bitErrorVector[4],bitErrorVector[5],bitErrorVector[6],bitErrorVector[7],bitErrorVector[8],bitErrorVector[9],validHeader,frameDetected);
+
+        SNRdB = SNRdB - 0.1;
         validHeader=0;
         printf("%d \n",i);
 
     }
-
+    fclose(logFile);
 
 
     printf("done.\n");
@@ -209,8 +260,10 @@ static int callback(unsigned char *  _header,
     //printf("    header crc          :   %s\n", _header_valid ?  "pass" : "FAIL");
     //printf("    payload length      :   %u\n", _payload_len);
     //printf("    payload crc         :   %s\n", _payload_valid ?  "pass" : "FAIL");
-    noBitError = count_bit_errors_array(_payload, payload, _payload_len);
-    validHeader = _payload_valid;
+    if (_payload_valid) {
+        noBitError = count_bit_errors_array(_payload, payload, _payload_len);
+        validHeader = _payload_valid;
+    }
     frameDetected = 1;
         //printf("    num payload bit errors  : %u / %u\n",noBitError,_payload_len*8);
 

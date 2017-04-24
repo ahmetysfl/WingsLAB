@@ -29,9 +29,13 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-lm -lc -lliquid" />
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="main.c">
+		<Linker>
+			<Add option="-lm -lc -lliquid" />
+		</Linker>
+		<Unit filename="fecMain.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
