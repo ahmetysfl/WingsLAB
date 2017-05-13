@@ -22,7 +22,8 @@
 #include <time.h>
 #include <getopt.h>
 #include <assert.h>
-
+ #include <sys/stat.h>
+ #include <sys/types.h>
 #include "liquid/liquid.h"
 
 
@@ -208,9 +209,45 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
 
 }
 
+/*
+First Argument is whether SNR changing or not
+0 => SNR is decreasing , 1 = > Burst len is decreasing
+Second is starting value initial
+*/
 
 int main(int argc, char *argv[])
 {
+    int snrORburst = 0;
+    float burst_len = 0;
+    float burst_len_init = 0;
+    float SNRdB_init = 8;
+    char logfileDir[256];
+    char logfilePath[256];
+    if(argc>3)
+    {
+        printf ("%s - \n",argv[2]);
+        burst_len_init = atof(argv[3]);
+        SNRdB_init = atof(argv[2]);
+        if (strcmp(argv[1],"1")==0)
+        {
+            snrORburst = 1;
+            sprintf(logfileDir,"SNR%.3f_burst%.3f",SNRdB_init,burst_len_init);
+        }
+        else
+        {
+            snrORburst = 0;
+            sprintf(logfileDir,"BURST%.3f_snr%.3f",burst_len_init,SNRdB_init);
+        }
+
+    }
+    else
+    {
+     printf("argument ERROR \n");
+     exit(1);
+    }
+    int result = mkdir(logfileDir, 0777);
+    printf("snrORburst : %d, burst_len : %.3f, SNRdB = %.3f \n",snrORburst,burst_len,SNRdB);
+
     srand(time(NULL));
     int i=0;
     //srand( time(NULL) );
@@ -225,77 +262,100 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    fec1          =  1;
-    char s[256];
-    sprintf(s,"log%d.txt",fec1);
-    logFile = fopen (s, "a+");
 
-    float burst_len = 0;
 
-    // create flexframegen object
-    flexframegenprops_s fgprops;
-    flexframegenprops_init_default(&fgprops);
-    fgprops.mod_scheme  = ms;
-    fgprops.check       = check;
-    fgprops.fec0        = fec0;
-    fgprops.fec1        = fec1;
-    flexframegen fg = flexframegen_create(&fgprops);
-    // assemble the frame (NULL pointers for default values)
-    flexframegen_assemble(fg, header, payload, payload_len);
 
-    flexframegen_print2(logFile,fg);
-    flexframegen_destroy(fg);
-    //int noTrials = 1;
-    int noTrials = 81;
-    fprintf(logFile,"BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame\n");
-    fclose(logFile);
-    int bitErrorVector[10];
-
-        sprintf(s,"log%d.txt",fec1);
-        logFile = fopen (s, "a+");
-    for (i=0; i<noTrials; i++)
+    for (int fec_count=1;fec_count<11;fec_count++)
     {
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[0]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[1]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[2]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[3]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[4]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[5]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[6]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[7]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[8]=noBitError;
-        noBitError=-1;
-        simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
-        bitErrorVector[9]=noBitError;
-        noBitError=-1;
+
+        SNRdB = SNRdB_init;
+        burst_len = burst_len_init;
+            fec1          =  fec_count;
+            sprintf(logfilePath,"%s/fec%d_burst%.3f_snr%.3f.txt",logfileDir,fec1,burst_len,SNRdB);
+            logFile = fopen (logfilePath, "a+");
 
 
-        fprintf(logFile,"%f;%f;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d \n",
-                burst_len,SNRdB,bitErrorVector[0],bitErrorVector[1],bitErrorVector[2],bitErrorVector[3],bitErrorVector[4],bitErrorVector[5],bitErrorVector[6],bitErrorVector[7],bitErrorVector[8],bitErrorVector[9],validHeader,frameDetected);
 
-        SNRdB = SNRdB - 0.1;
-        validHeader=0;
-        printf("%d \n",i);
+            // create flexframegen object
+            flexframegenprops_s fgprops;
+            flexframegenprops_init_default(&fgprops);
+            fgprops.mod_scheme  = ms;
+            fgprops.check       = check;
+            fgprops.fec0        = fec0;
+            fgprops.fec1        = fec1;
+            flexframegen fg = flexframegen_create(&fgprops);
+            // assemble the frame (NULL pointers for default values)
+            flexframegen_assemble(fg, header, payload, payload_len);
+
+            flexframegen_print2(logFile,fg);
+            flexframegen_destroy(fg);
+            int noTrials=0;
+            if (snrORburst)
+            {
+                noTrials = 31;
+            }
+            else
+            {
+                noTrials = 81;
+            }
+            //int noTrials = 1;
+            //int noTrials = 81;
+            fprintf(logFile,"BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame\n");
+            fclose(logFile);
+            int bitErrorVector[10];
+            logFile = fopen (logfilePath, "a+");
+            for (i=0; i<noTrials; i++)
+            {
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[0]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[1]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[2]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[3]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[4]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[5]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[6]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[7]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[8]=noBitError;
+                noBitError=-1;
+                simulateFrame (ms,check,fec0,fec1,SNRdB,burst_len);
+                bitErrorVector[9]=noBitError;
+                noBitError=-1;
+
+
+                fprintf(logFile,"%f;%f;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d \n",
+                        burst_len,SNRdB,bitErrorVector[0],bitErrorVector[1],bitErrorVector[2],bitErrorVector[3],bitErrorVector[4],bitErrorVector[5],bitErrorVector[6],bitErrorVector[7],bitErrorVector[8],bitErrorVector[9],validHeader,frameDetected);
+
+                if (snrORburst)
+                {
+                    burst_len = burst_len + 0.005;
+                }
+                else
+                {
+                    SNRdB = SNRdB - 0.1;
+                }
+                validHeader=0;
+                printf("%d \n",i);
+
+            }
+            fclose(logFile);
 
     }
-    fclose(logFile);
 
 
     printf("done.\n");

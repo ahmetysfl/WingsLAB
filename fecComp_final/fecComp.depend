@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1494679165 source:/home/ahmet/gitExample/fecComp/fecMain.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<time.h>
+	<getopt.h>
+	<assert.h>
+	"liquid/liquid.h"
+
+1494690118 source:/home/ahmet/gitExample/fecComp_final/fecMain.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<math.h>
+	<time.h>
+	<getopt.h>
+	<assert.h>
+	<sys/stat.h>
+	<sys/types.h>
+	"liquid/liquid.h"
+
