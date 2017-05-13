@@ -11,3 +11,96 @@ flexframegen:
   total         : 2229 symbols
   efficiency    : 1.72 bits/second/Hz
 BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+0.000000;3.000000;0;0;0;4063;0;1;0;0;0;0;1;1 
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+0.000000;3.000000;1;0;2;2;0;0;0;1;1;1;1;1 
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame
+flexframegen:
+  head          : 7 symbols
+  preamble      : 64
+  header        : 231 symbols (20 bytes)
+  payload       : 8 symbols (2 bytes)
+    payload crc : none
+    fec (inner) : none
+    fec (outer) : none
+    mod scheme  : qpsk
+  tail          : 7 symbols
+  total         : 317 symbols
+  efficiency    : 0.05 bits/second/Hz
+BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame

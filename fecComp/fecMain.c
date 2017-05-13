@@ -30,10 +30,10 @@
 unsigned char * header;
 unsigned char * payload;
 FILE* logFile;
-//const int  header_len = 1;
-int  header_len = 8;
-//const int  payload_len = 2;
-const int  payload_len = 480;
+const int  header_len = 1;
+//int  header_len = 8;
+const int  payload_len = 2;
+//const int  payload_len = 480;
 int noBitError = -1;
 int validHeader = 0;
 int frameDetected = 0;
@@ -111,18 +111,8 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
         // write samples to buffer
         frame_complete = flexframegen_write_samples(fg, x, buf_len);
 
-        /*
-        FILE * xFile;
-        char s[256];
-        sprintf(s,"log_frame.txt");
-        xFile = fopen (s, "a+");
-        for (i=0; i<buf_len; i++)
-        {
-            fprintf(xFile,"%f;%f\n",crealf(x[i]),cimagf(x[i]));
-        }
 
-        fclose(xFile);
-        */
+
         if(!frame_complete)
         {
             printf("Error buf is not suffiecnt");
@@ -180,7 +170,7 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
         }
 
 
-        /*
+
         FILE * xFile;
         char s[256];
         sprintf(s,"log_frame_SNR.txt");
@@ -192,7 +182,7 @@ int simulateFrame (modulation_scheme ms,crc_scheme check,fec_scheme fec0,fec_sch
         }
         fclose(xFile);
         exit(1);
-        */
+
         // run through frame synchronizer
         flexframesync_execute(fs, y, buf_len);
 
@@ -230,7 +220,7 @@ int main(int argc, char *argv[])
     sprintf(s,"log%d.txt",fec1);
     logFile = fopen (s, "a+");
 
-    float burst_len = 0;
+    float burst_len = 0.2;
 
     // create flexframegen object
     flexframegenprops_s fgprops;
@@ -245,8 +235,8 @@ int main(int argc, char *argv[])
 
     flexframegen_print2(logFile,fg);
     flexframegen_destroy(fg);
-    //int noTrials = 1;
-    int noTrials = 81;
+    int noTrials = 1;
+    //int noTrials = 81;
     fprintf(logFile,"BursERRORPercent;SNRdB;bitErrorRate_0;bitErrorRate_1;bitErrorRate_2;bitErrorRate_3;bitErrorRate_4;bitErrorRate_5;bitErrorRate_6;bitErrorRate_7;bitErrorRate_8;bitErrorRate_9;Valid Header,Detected Frame\n");
     fclose(logFile);
     int bitErrorVector[10];
